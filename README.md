@@ -5,7 +5,7 @@ $$
     \frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = \nu \frac{\partial^2 u}{\partial^2 x},
 $$
 
-where $u(x, t)$ is a function describing a field. In multiple dimensions we get:
+where $u(x, t)$ is a function describing a field, and $\nu$ is a constant controlling diffusion. In multiple dimensions we get:
 
 $$
     \frac{\partial u}{\partial t} + u \nabla u = \nu \nabla^2 u.
