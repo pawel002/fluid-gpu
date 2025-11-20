@@ -30,8 +30,8 @@ class BuildWithNVCC(build_ext):
 
 ext_modules = [
     Extension(
-        name="fluidgpu._solver",
-        sources=["fluidgpu/_solver.cu"],
+        name="fluidgpu._wrapper",
+        sources=["fluidgpu/_wrapper.cu"],
         include_dirs=[
             np.get_include(),                    # numpy headers
             os.path.join(CUDA_HOME, "include"),  # cuda headers

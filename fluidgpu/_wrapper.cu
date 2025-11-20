@@ -68,13 +68,13 @@ static PyMethodDef methods[] = {
 
 // module definition
 static struct PyModuleDef moduledef = {
-    PyModuleDef_HEAD_INIT, "_solver", "Fluid GPU solver core", -1, methods,
+    PyModuleDef_HEAD_INIT, "_wrapper", "Fluid GPU solver core", -1, methods,
     NULL, NULL, NULL, NULL
 };
 
 // module initialization
 PyMODINIT_FUNC 
-PyInit__solver(void)
+PyInit__wrapper(void)
 {
     import_array();
     return PyModule_Create(&moduledef);
