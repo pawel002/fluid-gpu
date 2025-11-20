@@ -4,9 +4,8 @@ This code solves Burger's partial differential equation on GPU using CUDA with a
 ## Prerequisites
 
 - Python 3.12
-- C compiler (e.g. gcc / clang)
+- NVIDIA GPU + CUDA toolkit (specifically the nvcc compiler)
 - [uv](https://github.com/astral-sh/uv) package manager installed
-- (TODO) NVIDIA GPU + CUDA toolkit (see CUDA section)
 
 ## Setup
 
@@ -22,7 +21,7 @@ After activating the `.venv` you need to build and install the `fluig-gpu` packa
 
 ```bash
 uv run python setup.py build_ext --inplace
-uv pip install -e .
+uv pip install --link-mode=copy -e .
 ```
 
 Verify installation by running simple test:

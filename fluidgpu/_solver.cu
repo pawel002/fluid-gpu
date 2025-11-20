@@ -3,6 +3,8 @@
 #include <Python.h>
 #include <numpy/arrayobject.h>
 
+#include "vector_add.cuh"
+
 static PyObject* add_vectors(PyObject* self, PyObject* args)
 {
     PyObject *A_obj = NULL;
@@ -37,18 +39,24 @@ static PyObject* add_vectors(PyObject* self, PyObject* args)
     }
     
     // raw pointers
-    float *A_data = (float*) PyArray_DATA(A_arr);
-    float *B_data = (float*) PyArray_DATA(B_arr);
-    float *C_data = (float*) PyArray_DATA(C_arr);
+    float *h_A = (float*) PyArray_DATA(A_arr);
+    float *h_B = (float*) PyArray_DATA(B_arr);
+    float *h_C = (float*) PyArray_DATA(C_arr);
 
-    // addition
-    for (npy_intp i = 0; i < n; ++i) {
-        C_data[i] = A_data[i] + B_data[i];
-    }
+    // addition on GPU
+    int status = vector_add_cuda(h_A, h_B, h_C, n);
 
     // cleanup
     Py_DECREF(A_arr);
     Py_DECREF(B_arr);
+
+    // check for error
+    if (status != 0) {
+        Py_DECREF(C_arr);
+        PyErr_SetString(PyExc_RuntimeError, "CUDA vector_add failed");
+        return NULL;
+    }
+
     return (PyObject*) C_arr;
 }
 
