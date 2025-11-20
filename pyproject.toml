@@ -1,0 +1,13 @@
+[project]
+name = "fluid-gpu"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.3.5",
+    "setuptools>=80.9.0",
+]
+
+[tool.uv.extra-build-dependencies]
+fluid-gpu = ["numpy"]
