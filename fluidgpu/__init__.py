@@ -50,12 +50,22 @@ def solver_steps(
         assert isinstance(value, float), f"{name} needs to be a float"
         assert value > 0, f"{name} needs to be > 0"
 
+    # make sure its contigous
+    u_c = np.ascontiguousarray(u, dtype=np.float32)
+    v_c = np.ascontiguousarray(v, dtype=np.float32)
+
     _cwrapper.solver_steps(
-        np.ascontiguousarray(u, dtype=np.float32), 
-        np.ascontiguousarray(v, dtype=np.float32), 
+        u_c, 
+        v_c, 
         steps,
         float(nu),
         float(dt), 
         float(dx), 
         float(dy)
     )
+
+    # make sure its copied back
+    if u_c is not u:
+        np.copyto(u, u_c)
+    if v_c is not v:
+        np.copyto(v, v_c)
