@@ -1,6 +1,6 @@
 # fluid-gpu
 
-### Problem definition
+## Problem definition
 
 This code solves Burgers' partial differential equation on GPU using CUDA with a simple Python interface. Simple Burgers' equation can be written as:
 
@@ -20,7 +20,36 @@ $$
     \mathbf{u}(x,y,t) = \begin{bmatrix} u(x,y,t) \\\ v(x,y,t) \end{bmatrix}
 $$
 
-### 2D solution
+## Prerequisites
+
+- Python 3.12
+- NVIDIA GPU + CUDA toolkit (specifically the nvcc compiler)
+- [uv](https://github.com/astral-sh/uv) package manager installed
+
+## Setup
+
+Clone the repository, sync using uv. 
+
+```bash
+git clone https://github.com/pawel002/fluid-gpu
+cd fluid-gpu
+uv sync
+```
+
+After activating the `.venv` you need to build and install the `fluig-gpu` package.
+
+```bash
+uv run python setup.py build_ext --inplace
+uv pip install --link-mode=copy -e .
+```
+
+Verify installation by running simple test:
+
+```bash
+uv run python tests/test.py
+```
+
+### 2D solution details
 
 Unrolling the vector field equation gives two equations:
 
@@ -74,33 +103,3 @@ $$
     &+ \nu \Delta t \Big[\frac{w_{i+1,j}^n - 2w_{i,j}^n + w_{i-1,j}^n}{\Delta x^2} + \frac{w_{i,j+1}^n - 2w_{i,j}^n + w_{i,j-1}^n}{\Delta y^2} \Big]
 \end{split}
 $$
-
-
-## Prerequisites
-
-- Python 3.12
-- NVIDIA GPU + CUDA toolkit (specifically the nvcc compiler)
-- [uv](https://github.com/astral-sh/uv) package manager installed
-
-## Setup
-
-Clone the repository, sync using uv. 
-
-```bash
-git clone https://github.com/pawel002/fluid-gpu
-cd fluid-gpu
-uv sync
-```
-
-After activating the `.venv` you need to build and install the `fluig-gpu` package.
-
-```bash
-uv run python setup.py build_ext --inplace
-uv pip install --link-mode=copy -e .
-```
-
-Verify installation by running simple test:
-
-```bash
-uv run python tests/test.py
-```
