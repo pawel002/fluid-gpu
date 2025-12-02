@@ -1,5 +1,5 @@
 import numpy as np
-from fluidgpu import vector_add
+from fluidgpu import vector_add, solver_steps
 
 A = np.array([1, 2, 3], dtype=np.float32)
 B = np.array([10, 20, 30], dtype=np.float32)

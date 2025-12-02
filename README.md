@@ -51,23 +51,17 @@ uv run python tests/test.py
 
 ### 2D solution details
 
-Unrolling the vector field equation gives two equations:
+The 2D Burgers' equation system in conservation form is:
 
 $$
-    \frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} + v \frac{\partial u}{\partial y} = \nu \Big(\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2}\Big)
+    \frac{\partial u}{\partial t} + \frac{\partial (u^2/2)}{\partial x} + \frac{\partial (uv)}{\partial y} = \nu \Big(\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2}\Big)
 $$
 
 $$
-    \frac{\partial v}{\partial t} + u \frac{\partial v}{\partial x} + v \frac{\partial v}{\partial y} = \nu \Big(\frac{\partial^2 v}{\partial x^2} + \frac{\partial^2 v}{\partial y^2}\Big)
+    \frac{\partial v}{\partial t} + \frac{\partial (uv)}{\partial x} + \frac{\partial (v^2/2)}{\partial y} = \nu \Big(\frac{\partial^2 v}{\partial x^2} + \frac{\partial^2 v}{\partial y^2}\Big)
 $$
 
-We can solve the update step using Lax-Friedrichs method. We can rewrite the equation in more convenient way (subscript represents derivate w.r.t. given dimension):
-
-$$
-    w_t + uw_x + vw_y =\nu(w_{xx} + w_{yy}), \; \; w \in \{u, v \}.
-$$
-
-We can describe problem discretication with following variables:
+We solve the update step using the Lax-Friedrichs (Rusanov) method. We describe the problem discretization with the following variables:
 
 - $x_i = i \Delta x, i \in \{1, \cdots, N_x - 1\}$.
 - $y_j = j \Delta x, j \in \{1, \cdots, N_y - 1\}$.
@@ -75,25 +69,43 @@ We can describe problem discretication with following variables:
 - $u_{i,j}^n \approx u(x_i, y_j, t^n)$.
 - $v_{i,j}^n \approx v(x_i, y_j, t^n)$.
 
-Now we can define direction fluxes. $x$-axis flux in point $(i + \frac{1}{2}, j)$ is:
+#### 1. Flux Definitions
 
-$$
-    F_{i + 1 / 2,j}^{(w)} = \frac{1}{2}(u_{i,j}^n w_{i,j}^n + u_{i+1,j}^n w_{i+1,j}^n) - \frac{1}{2} \max(u_{i,j}^n, u_{i+1,j}^n)(w_{i+1,j}^n - w_{i,j}^n).
-$$
+We define separate fluxes for the $u$ (horizontal) and $v$ (vertical) momentum equations to account for the conservative variable forms ($u^2/2$ vs $uv$).
 
-Flux along $y$-axis at $(i, j + \frac{1}{2})$ is:
+**For the $u$-component equation:**
 
+Flux along $x$-axis at $(i + \frac{1}{2}, j)$:
 $$
-    G_{i,j+1/2}^{(w)} = \frac{1}{2}(v_{i,j}^n w_{i,j}^n + v_{i,j+1}^n w_{i,j+1}^n) - \frac{1}{2} \max(u_{i,j}^n, u_{i,j+1}^n)(w_{i,j+1}^n - w_{i,j}^n).
-$$
-
-Diffusion term can be expressed using standard 5-points Laplacian $w \in \{u, v \}$:
-
-$$
-    (w_{xx}​+w_{yy}​) \approx \Big(\frac{w_{i+1,j}^n - 2w_{i,j}^n + w_{i-1,j}^n}{\Delta x^2} + \frac{w_{i,j+1}^n - 2w_{i,j}^n + w_{i,j-1}^n}{\Delta y^2}\Big)
+    F_{i + 1 / 2,j}^{(u)} = \frac{1}{2}\left( \frac{(u_{i,j}^n)^2}{2} + \frac{(u_{i+1,j}^n)^2}{2} \right) - \frac{1}{2} \max(|u_{i,j}^n|, |u_{i+1,j}^n|)(u_{i+1,j}^n - u_{i,j}^n)
 $$
 
-Full update per cell $(i, j)$, per component $w \in \{u, v \}$:
+Flux along $y$-axis at $(i, j + \frac{1}{2})$:
+$$
+    G_{i,j+1/2}^{(u)} = \frac{1}{2}(v_{i,j}^n u_{i,j}^n + v_{i,j+1}^n u_{i,j+1}^n) - \frac{1}{2} \max(|v_{i,j}^n|, |v_{i,j+1}^n|)(u_{i,j+1}^n - u_{i,j}^n)
+$$
+
+**For the $v$-component equation:**
+
+Flux along $x$-axis at $(i + \frac{1}{2}, j)$:
+$$
+    F_{i + 1 / 2,j}^{(v)} = \frac{1}{2}(u_{i,j}^n v_{i,j}^n + u_{i+1,j}^n v_{i+1,j}^n) - \frac{1}{2} \max(|u_{i,j}^n|, |u_{i+1,j}^n|)(v_{i+1,j}^n - v_{i,j}^n)
+$$
+
+Flux along $y$-axis at $(i, j + \frac{1}{2})$:
+$$
+    G_{i,j+1/2}^{(v)} = \frac{1}{2}\left( \frac{(v_{i,j}^n)^2}{2} + \frac{(v_{i,j+1}^n)^2}{2} \right) - \frac{1}{2} \max(|v_{i,j}^n|, |v_{i,j+1}^n|)(v_{i,j+1}^n - v_{i,j}^n)
+$$
+
+#### 2. Diffusion and Update Step
+
+The diffusion term is expressed using the standard 5-point Laplacian for $w \in \{u, v \}$:
+
+$$
+    (\nabla^2 w)_{i,j} \approx \Big(\frac{w_{i+1,j}^n - 2w_{i,j}^n + w_{i-1,j}^n}{\Delta x^2} + \frac{w_{i,j+1}^n - 2w_{i,j}^n + w_{i,j-1}^n}{\Delta y^2}\Big)
+$$
+
+Full update per cell $(i, j)$, for component $w$ (using the corresponding $F^{(w)}$ and $G^{(w)}$ defined above):
 
 $$
 \begin{split}
