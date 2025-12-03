@@ -76,11 +76,13 @@ We define separate fluxes for the $u$ (horizontal) and $v$ (vertical) momentum e
 **For the $u$-component equation:**
 
 Flux along $x$-axis at $(i + \frac{1}{2}, j)$:
+
 $$
     F_{i + 1 / 2,j}^{(u)} = \frac{1}{2}\left( \frac{(u_{i,j}^n)^2}{2} + \frac{(u_{i+1,j}^n)^2}{2} \right) - \frac{1}{2} \max(|u_{i,j}^n|, |u_{i+1,j}^n|)(u_{i+1,j}^n - u_{i,j}^n)
 $$
 
 Flux along $y$-axis at $(i, j + \frac{1}{2})$:
+
 $$
     G_{i,j+1/2}^{(u)} = \frac{1}{2}(v_{i,j}^n u_{i,j}^n + v_{i,j+1}^n u_{i,j+1}^n) - \frac{1}{2} \max(|v_{i,j}^n|, |v_{i,j+1}^n|)(u_{i,j+1}^n - u_{i,j}^n)
 $$
@@ -88,11 +90,13 @@ $$
 **For the $v$-component equation:**
 
 Flux along $x$-axis at $(i + \frac{1}{2}, j)$:
+
 $$
     F_{i + 1 / 2,j}^{(v)} = \frac{1}{2}(u_{i,j}^n v_{i,j}^n + u_{i+1,j}^n v_{i+1,j}^n) - \frac{1}{2} \max(|u_{i,j}^n|, |u_{i+1,j}^n|)(v_{i+1,j}^n - v_{i,j}^n)
 $$
 
 Flux along $y$-axis at $(i, j + \frac{1}{2})$:
+
 $$
     G_{i,j+1/2}^{(v)} = \frac{1}{2}\left( \frac{(v_{i,j}^n)^2}{2} + \frac{(v_{i,j+1}^n)^2}{2} \right) - \frac{1}{2} \max(|v_{i,j}^n|, |v_{i,j+1}^n|)(v_{i,j+1}^n - v_{i,j}^n)
 $$
