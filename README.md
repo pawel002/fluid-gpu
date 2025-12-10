@@ -20,6 +20,12 @@ $$
     \mathbf{u}(x,y,t) = \begin{bmatrix} u(x,y,t) \\\ v(x,y,t) \end{bmatrix}
 $$
 
+## Solution
+
+Using our solver and matplotlib, we generated the following simulation for a pressure wave that moves in the direction of positive $u$ an $v$:
+
+![](benchmarks/Gaussian_Diffusion_3D.gif)
+
 ## Prerequisites
 
 - Python 3.12
