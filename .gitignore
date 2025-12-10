@@ -207,3 +207,5 @@ marimo/_lsp/
 __marimo__/
 
 .vscode
+
+frames_3d_Collision/
