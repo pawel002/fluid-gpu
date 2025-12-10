@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <numpy/arrayobject.h>
+#include <cuda_runtime.h>
 
 #include "burgers_solver.cuh"
 
@@ -44,7 +45,11 @@ static PyObject* burgers_solver(PyObject* self, PyObject* args)
     if (status != 0) {
         Py_DECREF(u_arr);
         Py_DECREF(v_arr);
-        PyErr_SetString(PyExc_RuntimeError, "CUDA burgers solver failed");
+        const char* cuda_error = cudaGetErrorString((cudaError_t)status);
+        char error_msg[256];
+        snprintf(error_msg, sizeof(error_msg), "CUDA burgers solver failed: %s (code: %d)", 
+                 cuda_error ? cuda_error : "Unknown error", status);
+        PyErr_SetString(PyExc_RuntimeError, error_msg);
         Py_RETURN_NONE;
     }
 
