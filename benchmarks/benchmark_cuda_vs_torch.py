@@ -32,7 +32,7 @@ def generate_test_data(nx, ny):
     return u, v
 
 
-def benchmark_implementation(name, solver_func, u, v, nu, dt, dx, dy, steps, warmup_runs=2, benchmark_runs=10):
+def benchmark_implementation(name, solver_func, u, v, nu, dt, dx, dy, steps, warmup_runs=1, benchmark_runs=5):
     """Benchmark a solver implementation"""
     # Warmup runs
     u_warmup = u.copy()
@@ -105,13 +105,16 @@ def main():
     
     # Test parameters (similar to visualize_solver.py)
     test_cases = [
-        {"nx": 128, "ny": 128, "steps": 1500, "name": "Small (128x128)"},
-        {"nx": 256, "ny": 256, "steps": 1500, "name": "Medium (256x256)"},
-        {"nx": 512, "ny": 512, "steps": 1500, "name": "Large (512x512)"},
+        {"nx": 128, "ny": 128, "steps": 1500, "name": "M1 (128x128)"},
+        {"nx": 256, "ny": 256, "steps": 1500, "name": "M2 (256x256)"},
+        {"nx": 512, "ny": 512, "steps": 1500, "name": "M3 (512x512)"},
+        {"nx": 1024, "ny": 1024, "steps": 1500, "name": "M4 (1024x1024)"},
+        {"nx": 2048, "ny": 2048, "steps": 1500, "name": "M5 (2048x2048)"},
+        {"nx": 4096, "ny": 4096, "steps": 1500, "name": "M6 (4096X4096)"},
     ]
     
-    nu = 0.005  # Similar to Gaussian_Diffusion scenario
-    dt = 0.0005  # Same as visualize_solver.py
+    nu = 0.005
+    dt = 0.00001
     
     for test_case in test_cases:
         nx = test_case["nx"]
