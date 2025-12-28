@@ -9,7 +9,13 @@ dependencies = [
     "numpy>=2.3.5",
     "pillow>=12.0.0",
     "setuptools>=80.9.0",
+    "torch>=2.9.1",
 ]
 
 [tool.uv.extra-build-dependencies]
 fluid-gpu = ["numpy"]
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true

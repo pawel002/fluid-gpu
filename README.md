@@ -55,6 +55,17 @@ Verify installation by running simple test:
 uv run python tests/test.py
 ```
 
+PyTorch version:
+```bash
+uv run python tests/test_torch.py
+```
+
+Compare the two:
+```bash
+uv run python benchmarks/benchmark_cuda_vs_torch.py
+```
+
+
 ### 2D solution details
 
 The 2D Burgers' equation system in conservation form is:

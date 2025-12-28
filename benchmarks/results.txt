@@ -1,0 +1,37 @@
+2D Burgers' Equation Solver: CUDA vs PyTorch Benchmark
+
+M1 (128x128) (128x128, 1500 steps):
+  CUDA C++: 14.77 ms (0.0098 ms/step)
+  PyTorch: 318.05 ms (0.2120 ms/step)
+  ✓ Max diff: U=1.79e-07, V=1.86e-06
+  CUDA is 21.53x faster
+
+M2 (256x256) (256x256, 1500 steps):
+  CUDA C++: 13.93 ms (0.0093 ms/step)
+  PyTorch: 364.48 ms (0.2430 ms/step)
+  ✓ Max diff: U=2.98e-07, V=1.86e-06
+  CUDA is 26.17x faster
+
+M3 (512x512) (512x512, 1500 steps):
+  CUDA C++: 41.72 ms (0.0278 ms/step)
+  PyTorch: 616.36 ms (0.4109 ms/step)
+  ✓ Max diff: U=2.38e-07, V=1.86e-06
+  CUDA is 14.77x faster
+
+M4 (1024x1024) (1024x1024, 1500 steps):
+  CUDA C++: 140.84 ms (0.0939 ms/step)
+  PyTorch: 1998.05 ms (1.3320 ms/step)
+  X CUDA contains NaN values
+  CUDA is 14.19x faster
+
+M5 (2048x2048) (2048x2048, 1500 steps):
+  CUDA C++: 545.53 ms (0.3637 ms/step)
+  PyTorch: 7575.02 ms (5.0500 ms/step)
+  X CUDA contains NaN values
+  CUDA is 13.89x faster
+
+M6 (4096X4096) (4096x4096, 1500 steps):
+  CUDA C++: 2338.12 ms (1.5587 ms/step)
+  PyTorch: 30284.70 ms (20.1898 ms/step)
+  X CUDA contains NaN values
+  CUDA is 12.95x faster
