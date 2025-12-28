@@ -26,6 +26,10 @@ Using our solver and matplotlib, we generated the following simulation for a pre
 
 ![](benchmarks/Gaussian_Diffusion_3D.gif)
 
+We were able to get almost 20x speed up for any size of the problem comparing it to the PyTorch solution.
+
+![](benchmarks/speedup_plot.png)
+
 ## Prerequisites
 
 - Python 3.12
