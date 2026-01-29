@@ -1,107 +1,123 @@
 <!doctype html>
 <html>
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
 
     <title>Fluid-GPU Presentation</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reset.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/theme/black.min.css">
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/plugin/highlight/monokai.min.css">
-</head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reveal.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/theme/black.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/plugin/highlight/monokai.min.css"
+    />
+  </head>
 
-<body>
+  <body>
     <div class="reveal">
-        <div class="slides">
-            <!-- Slide 1: Title -->
-            <section>
-                <h3>Fluid-GPU</h3>
-                <p>Solving Burgers' PDE on GPU using CUDA</p>
-            </section>
+      <div class="slides">
+        <!-- Slide 1: Title -->
+        <section>
+          <h3>Fluid-GPU</h3>
+          <p>Solving Burgers' PDE on GPU using CUDA</p>
+        </section>
 
-            <!-- Slide 2: Problem Definition -->
-            <section>
-                <h3>Problem Definition</h3>
-                <p>We solve the 2D Burgers' partial differential equation.</p>
-                <p>It describes a field $\mathbf{u}$ evolving over time with diffusion.</p>
-                <p>
-                    $$ \frac{\partial \mathbf{u}}{\partial t} + \mathbf{u} \nabla \mathbf{u} = \nu \nabla^2 \mathbf{u}
-                    $$
-                </p>
-                <p style="font-size: 0.7em;">
-                    where $\mathbf{u} = [u, v]^T$ and $\nu$ is the diffusion constant.
-                </p>
-            </section>
+        <!-- Slide 2: Problem Definition -->
+        <section>
+          <h3>Problem Definition</h3>
+          <p>We solve the 2D Burgers' partial differential equation.</p>
+          <p>
+            It describes a field $\mathbf{u}$ evolving over time with diffusion.
+          </p>
+          <p>
+            $$ \frac{\partial \mathbf{u}}{\partial t} + \mathbf{u} \nabla
+            \mathbf{u} = \nu \nabla^2 \mathbf{u} $$
+          </p>
+          <p style="font-size: 0.7em">
+            where $\mathbf{u} = [u, v]^T$ and $\nu$ is the diffusion constant.
+          </p>
+        </section>
 
-            <!-- Slide 3: 2D Equations -->
-            <section>
-                <h3>2D System</h3>
-                <div style="font-size: 0.7em;">
-                    <p>
-                        $$ \frac{\partial u}{\partial t} + \frac{\partial (u^2/2)}{\partial x} + \frac{\partial
-                        (uv)}{\partial y} = \nu \nabla^2 u $$
-                    </p>
-                    <p>
-                        $$ \frac{\partial v}{\partial t} + \frac{\partial (uv)}{\partial x} + \frac{\partial
-                        (v^2/2)}{\partial y} = \nu \nabla^2 v $$
-                    </p>
-                </div>
-            </section>
+        <!-- Slide 3: 2D Equations -->
+        <section>
+          <h3>2D System</h3>
+          <div style="font-size: 0.7em">
+            <p>
+              $$ \frac{\partial u}{\partial t} + \frac{\partial
+              (u^2/2)}{\partial x} + \frac{\partial (uv)}{\partial y} = \nu
+              \nabla^2 u $$
+            </p>
+            <p>
+              $$ \frac{\partial v}{\partial t} + \frac{\partial (uv)}{\partial
+              x} + \frac{\partial (v^2/2)}{\partial y} = \nu \nabla^2 v $$
+            </p>
+          </div>
+        </section>
 
-            <!-- Slide 4: Flux Definitions (u-component) -->
-            <section>
-                <h3>Flux Definitions (u-component)</h3>
-                <div style="font-size: 0.5em;">
-                    <p>Flux along x-axis:</p>
-                    $$ F_{i + 1 / 2,j}^{(u)} = \frac{1}{2}\left( \frac{(u_{i,j}^n)^2}{2} + \frac{(u_{i+1,j}^n)^2}{2}
-                    \right) - \frac{1}{2} \max(|u_{i,j}^n|, |u_{i+1,j}^n|)(u_{i+1,j}^n - u_{i,j}^n) $$
+        <!-- Slide 4: Flux Definitions (u-component) -->
+        <section>
+          <h3>Flux Definitions (u-component)</h3>
+          <div style="font-size: 0.5em">
+            <p>Flux along x-axis:</p>
+            $$ F_{i + 1 / 2,j}^{(u)} = \frac{1}{2}\left( \frac{(u_{i,j}^n)^2}{2}
+            + \frac{(u_{i+1,j}^n)^2}{2} \right) - \frac{1}{2} \max(|u_{i,j}^n|,
+            |u_{i+1,j}^n|)(u_{i+1,j}^n - u_{i,j}^n) $$
 
-                    <p>Flux along y-axis:</p>
-                    $$ G_{i,j+1/2}^{(u)} = \frac{1}{2}(v_{i,j}^n u_{i,j}^n + v_{i,j+1}^n u_{i,j+1}^n) - \frac{1}{2}
-                    \max(|v_{i,j}^n|, |v_{i,j+1}^n|)(u_{i,j+1}^n - u_{i,j}^n) $$
-                </div>
-            </section>
+            <p>Flux along y-axis:</p>
+            $$ G_{i,j+1/2}^{(u)} = \frac{1}{2}(v_{i,j}^n u_{i,j}^n + v_{i,j+1}^n
+            u_{i,j+1}^n) - \frac{1}{2} \max(|v_{i,j}^n|,
+            |v_{i,j+1}^n|)(u_{i,j+1}^n - u_{i,j}^n) $$
+          </div>
+        </section>
 
-            <!-- Slide 5: Flux Definitions (v-component) -->
-            <section>
-                <h3>Flux Definitions (v-component)</h3>
-                <div style="font-size: 0.5em;">
-                    <p>Flux along x-axis:</p>
-                    $$ F_{i + 1 / 2,j}^{(v)} = \frac{1}{2}(u_{i,j}^n v_{i,j}^n + u_{i+1,j}^n v_{i+1,j}^n) - \frac{1}{2}
-                    \max(|u_{i,j}^n|, |u_{i+1,j}^n|)(v_{i+1,j}^n - v_{i,j}^n) $$
+        <!-- Slide 5: Flux Definitions (v-component) -->
+        <section>
+          <h3>Flux Definitions (v-component)</h3>
+          <div style="font-size: 0.5em">
+            <p>Flux along x-axis:</p>
+            $$ F_{i + 1 / 2,j}^{(v)} = \frac{1}{2}(u_{i,j}^n v_{i,j}^n +
+            u_{i+1,j}^n v_{i+1,j}^n) - \frac{1}{2} \max(|u_{i,j}^n|,
+            |u_{i+1,j}^n|)(v_{i+1,j}^n - v_{i,j}^n) $$
 
-                    <p>Flux along y-axis:</p>
-                    $$ G_{i,j+1/2}^{(v)} = \frac{1}{2}\left( \frac{(v_{i,j}^n)^2}{2} + \frac{(v_{i,j+1}^n)^2}{2} \right)
-                    - \frac{1}{2} \max(|v_{i,j}^n|, |v_{i,j+1}^n|)(v_{i,j+1}^n - v_{i,j}^n) $$
-                </div>
-            </section>
+            <p>Flux along y-axis:</p>
+            $$ G_{i,j+1/2}^{(v)} = \frac{1}{2}\left( \frac{(v_{i,j}^n)^2}{2} +
+            \frac{(v_{i,j+1}^n)^2}{2} \right) - \frac{1}{2} \max(|v_{i,j}^n|,
+            |v_{i,j+1}^n|)(v_{i,j+1}^n - v_{i,j}^n) $$
+          </div>
+        </section>
 
+        <!-- Slide 6: Update Step -->
+        <section>
+          <h3>Full Update Step</h3>
+          <div style="font-size: 0.5em">
+            $$ \begin{split} w_{i,j}^{n+1} &= w_{i,j}^n \\ &- \frac{\Delta
+            t}{\Delta x} \Big(F^{(w)}_{i+1/2,j} - F^{(w)}_{i-1/2,j} \Big) \\ &-
+            \frac{\Delta t}{\Delta y} \Big(G^{(w)}_{i,j+1/2} - G^{(w)}_{i,j-1/2}
+            \Big) \\ &+ \nu \Delta t \Big[\frac{w_{i+1,j}^n - 2w_{i,j}^n +
+            w_{i-1,j}^n}{\Delta x^2} + \frac{w_{i,j+1}^n - 2w_{i,j}^n +
+            w_{i,j-1}^n}{\Delta y^2} \Big] \end{split} $$
+          </div>
+          <p style="font-size: 0.6em">Using Lax-Friedrichs (Rusanov) method</p>
+        </section>
 
-            <!-- Slide 6: Update Step -->
-            <section>
-                <h3>Full Update Step</h3>
-                <div style="font-size: 0.5em;">
-                    $$
-                    \begin{split}
-                    w_{i,j}^{n+1} &= w_{i,j}^n \\
-                    &- \frac{\Delta t}{\Delta x} \Big(F^{(w)}_{i+1/2,j} - F^{(w)}_{i-1/2,j} \Big) \\
-                    &- \frac{\Delta t}{\Delta y} \Big(G^{(w)}_{i,j+1/2} - G^{(w)}_{i,j-1/2} \Big) \\
-                    &+ \nu \Delta t \Big[\frac{w_{i+1,j}^n - 2w_{i,j}^n + w_{i-1,j}^n}{\Delta x^2} + \frac{w_{i,j+1}^n -
-                    2w_{i,j}^n + w_{i,j-1}^n}{\Delta y^2} \Big]
-                    \end{split}
-                    $$
-                </div>
-                <p style="font-size: 0.6em;">Using Lax-Friedrichs (Rusanov) method</p>
-            </section>
-
-            <!-- Slide 7: Python Interface -->
-            <section>
-                <h3>Python Interface</h3>
-                <pre><code data-trim data-noescape class="python">
+        <!-- Slide 7: Python Interface -->
+        <section>
+          <h3>Python Interface</h3>
+          <pre><code data-trim data-noescape class="python">
 import numpy as np
 from fluidgpu import solver_steps
 
@@ -117,41 +133,49 @@ solver_steps(
     steps=100      # Number of steps
 )
                     </code></pre>
-            </section>
+        </section>
 
-            <!-- Slide 8: GPU Work Distribution - Thread Blocks -->
-            <section>
-                <h3>GPU Work Distribution: Thread Blocks</h3>
-                <div style="font-size: 0.7em;">
-                    <p><strong>Grid Configuration:</strong></p>
-                    <ul>
-                        <li>Each thread block: <code>32×32</code> threads</li>
-                        <li>Grid dimensions: <code>⌈nx/32⌉ × ⌈ny/32⌉</code> blocks</li>
-                        <li>Each thread processes one grid point <code>(gx, gy)</code></li>
-                    </ul>
-                    <p style="margin-top: 1em;"><strong>Thread Indexing:</strong></p>
-                    <pre><code data-trim data-noescape class="cpp">
+        <!-- Slide 8: GPU Work Distribution - Thread Blocks -->
+        <section>
+          <h3>GPU Work Distribution: Thread Blocks</h3>
+          <div style="font-size: 0.7em">
+            <p><strong>Grid Configuration:</strong></p>
+            <ul>
+              <li>Each thread block: <code>32×32</code> threads</li>
+              <li>Grid dimensions: <code>⌈nx/32⌉ × ⌈ny/32⌉</code> blocks</li>
+              <li>
+                Each thread processes one grid point <code>(gx, gy)</code>
+              </li>
+            </ul>
+            <p style="margin-top: 1em"><strong>Thread Indexing:</strong></p>
+            <pre><code data-trim data-noescape class="cpp">
 int gx = blockIdx.x * blockDim.x + threadIdx.x;
 int gy = blockIdx.y * blockDim.y + threadIdx.y;
                         </code></pre>
-                    <p style="font-size: 0.8em; margin-top: 1em;">
-                        Work is divided into tiles, with each block processing a 32×32 region of the grid.
-                    </p>
-                </div>
-            </section>
+            <p style="font-size: 0.8em; margin-top: 1em">
+              Work is divided into tiles, with each block processing a 32×32
+              region of the grid.
+            </p>
+          </div>
+        </section>
 
-            <!-- Slide 9: GPU Work Distribution - Shared Memory -->
-            <section>
-                <h3>GPU Work Distribution: Shared Memory</h3>
-                <div style="font-size: 0.7em;">
-                    <p><strong>Shared Memory Optimization:</strong></p>
-                    <ul>
-                        <li>Each block uses <code>34×34</code> shared memory (tile + 1-pixel halo)</li>
-                        <li>Cooperative loading: threads load center + boundary pixels</li>
-                        <li>Reduces global memory accesses by ~10x</li>
-                    </ul>
-                    <p style="margin-top: 1em;"><strong>Boundary Loading:</strong></p>
-                    <pre><code data-trim data-noescape class="cpp">
+        <!-- Slide 9: GPU Work Distribution - Shared Memory -->
+        <section>
+          <h3>GPU Work Distribution: Shared Memory</h3>
+          <div style="font-size: 0.7em">
+            <p><strong>Shared Memory Optimization:</strong></p>
+            <ul>
+              <li>
+                Each block uses <code>34×34</code> shared memory (tile + 1-pixel
+                halo)
+              </li>
+              <li>
+                Cooperative loading: threads load center + boundary pixels
+              </li>
+              <li>Reduces global memory accesses by ~10x</li>
+            </ul>
+            <p style="margin-top: 1em"><strong>Boundary Loading:</strong></p>
+            <pre><code data-trim data-noescape class="cpp">
 // Each thread loads its center pixel
 s_u[sy][sx] = u[gy * nx + gx];
 
@@ -159,44 +183,70 @@ s_u[sy][sx] = u[gy * nx + gx];
 if (tx == 0) s_u[sy][0] = u[gy * nx + (gx-1)];
 if (tx == 31) s_u[sy][33] = u[gy * nx + (gx+1)];
                         </code></pre>
-                    <p style="font-size: 0.8em; margin-top: 1em;">
-                        After <code>__syncthreads()</code>, all threads access fast shared memory instead of slow global
-                        memory.
-                    </p>
-                </div>
-            </section>
+            <p style="font-size: 0.8em; margin-top: 1em">
+              After <code>__syncthreads()</code>, all threads access fast shared
+              memory instead of slow global memory.
+            </p>
+          </div>
+        </section>
 
-            <!-- Slide 10: Simulation Demo -->
-            <section>
-                <h3>Simulation Demo (single wave)</h3>
-                <img src="Gaussian_Diffusion_3D.gif" alt="Simulation gif" style="height: 400px;">
-                <p>Pressure wave simulation</p>
-            </section>
+        <!-- Slide 10: Simulation Demo -->
+        <section>
+          <h3>Simulation Demo (single wave)</h3>
+          <img
+            src="Gaussian_Diffusion_3D.gif"
+            alt="Simulation gif"
+            style="height: 400px"
+          />
+          <p>Pressure wave simulation</p>
+        </section>
 
-            <section>
-                <h3>Simulation Demo (colliding waves)</h3>
-                <img src="Collision_3D.gif" alt="Simulation gif" style="height: 400px;">
-                <p>Pressure wave simulation</p>
-            </section>
+        <section>
+          <h3>Simulation Demo (colliding waves)</h3>
+          <img
+            src="Collision_3D.gif"
+            alt="Simulation gif"
+            style="height: 400px"
+          />
+          <p>Pressure wave simulation</p>
+        </section>
 
-            <!-- Slide 11: Performance Benchmarks -->
-            <section>
-                <h3>Performance Gain</h3>
-                <img src="speedup_plot.png" alt="Speedup plot" style="height: 400px;">
-                <p>Achieved ~15x speedup compared to PyTorch implementation on any problem size.</p>
-            </section>
+        <!-- Slide 11: Performance Benchmarks -->
+        <section>
+          <h3>Performance Comparison</h3>
+          <img
+            src="performance_comparison.png"
+            alt="Speedup plot"
+            style="height: 400px"
+          />
+          <p>
+            Comparison of simulation times between Pytorch and CUDA
+            implementations.
+          </p>
+        </section>
 
-        </div>
+        <section>
+          <h3>Performance Gain</h3>
+          <img
+            src="speedup_plot.png"
+            alt="Speedup plot"
+            style="height: 400px"
+          />
+          <p>
+            Achieved ~15x speedup compared to PyTorch implementation on any
+            problem size.
+          </p>
+        </section>
+      </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reveal.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/plugin/math/math.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/plugin/highlight/highlight.min.js"></script>
     <script>
-        Reveal.initialize({
-            plugins: [RevealMath.KaTeX, RevealHighlight]
-        });
+      Reveal.initialize({
+        plugins: [RevealMath.KaTeX, RevealHighlight],
+      });
     </script>
-</body>
-
+  </body>
 </html>
